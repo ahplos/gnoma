@@ -1,0 +1,135 @@
+---
+# Source: gnoma-chart/templates/render.yaml
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  labels:
+    app.kubernetes.io/instance: gnoma-chart-demo
+    app.kubernetes.io/managed-by: Helm
+    gnoma.io/selector: index.html
+    helm.sh/chart: gnoma-chart-0.1.0
+  name: index.html
+  namespace: gnoma-chart-demo
+data:
+  index.html: |-
+    <!DOCTYPE html>
+    <html>
+      <body>
+        <h1><h1>Howdy from index.html in release gnoma-chart-demo!<h1></h1>
+      </body>
+    </html>
+# Rendered Gnoma Chart Template -> "configMap" index.html
+---
+# Source: gnoma-chart/templates/render.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app.kubernetes.io/instance: gnoma-chart-demo
+    app.kubernetes.io/managed-by: Helm
+    gnoma.io/selector: gnoma-chart-demo
+    helm.sh/chart: gnoma-chart-0.1.0
+  name: gnoma-chart-demo
+  namespace: gnoma-chart-demo
+spec:
+  selector:
+    gnoma.io/selector: gnoma-chart-demo
+  ports:
+  - name: gnoma-chart-demo-port
+    port: 8080
+    protocol: TCP
+# Rendered Gnoma Chart Template -> "service" gnoma-chart-demo
+---
+# Source: gnoma-chart/templates/render.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app.kubernetes.io/instance: gnoma-chart-demo
+    app.kubernetes.io/managed-by: Helm
+    gnoma.io/selector: gnoma-chart-demo
+    helm.sh/chart: gnoma-chart-0.1.0
+  name: gnoma-chart-demo
+  namespace: gnoma-chart-demo
+spec:
+  revisionHistoryLimit: 0
+  selector:
+    matchExpressions:
+    - key: gnoma.io/selector
+      operator: Exists
+    matchLabels:
+      gnoma.io/selector: gnoma-chart-demo
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/instance: gnoma-chart-demo
+        app.kubernetes.io/managed-by: Helm
+        gnoma.io/selector: gnoma-chart-demo
+        helm.sh/chart: gnoma-chart-0.1.0
+      name: gnoma-chart-demo
+      namespace: gnoma-chart-demo
+    spec:
+      containers:
+      - name: gnoma-chart-demo
+        image: registry.redhat.io/rhel8/httpd-24
+        imagePullPolicy: Always
+        ports:
+        - name: default-port
+          containerPort: 8080
+          protocol: TCP
+        resources:
+          limits: {}
+          requests: {}
+        securityContext:
+          allowPrivilegeEscalation: false
+          capabilities:
+            drop:
+            - ALL
+        volumeMounts:
+        - mountPath: /var/www/html/
+          name: gnoma-chart-demo
+          readOnly: false
+      imagePullSecrets: []
+      securityContext:
+        runAsNonRoot: true
+        seccompProfile:
+          type: RuntimeDefault
+      volumes:
+      - name: gnoma-chart-demo
+        projected:
+          sources:
+          - configMap:
+              name: index.html
+# Rendered Gnoma Chart Template -> "deployment" gnoma-chart-demo
+---
+# Source: gnoma-chart/templates/render.yaml
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  annotations:
+    kubernetes.io/ingress.allow-http: "false"
+  labels:
+    app.kubernetes.io/instance: gnoma-chart-demo
+    app.kubernetes.io/managed-by: Helm
+    gnoma.io/selector: gnoma-chart-demo
+    helm.sh/chart: gnoma-chart-0.1.0
+  name: gnoma-chart-demo
+  namespace: gnoma-chart-demo
+spec:
+  rules:
+  - host: httpd-gnoma-chart-demo.apps-crc.testing
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: gnoma-chart-demo
+            port:
+              number: 8080
+  tls:
+  - secretName:
+# Rendered Gnoma Chart Template -> "ingress" gnoma-chart-demo
+---
+# Source: gnoma-chart/templates/render.yaml
+# Profiles: []

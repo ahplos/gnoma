@@ -1,0 +1,344 @@
+---
+# Source: gnoma-chart/templates/render.yaml
+apiVersion: v1
+kind: Namespace
+metadata:
+  labels:
+    app.kubernetes.io/instance: gnoma-chart-demo
+    app.kubernetes.io/managed-by: Helm
+    gnoma.io/selector: gnoma-chart-demo-2
+    helm.sh/chart: gnoma-chart-0.1.0
+  name: gnoma-chart-demo-2
+  namespace: gnoma-chart-demo
+# Rendered Gnoma Chart Template -> "namespace" gnoma-chart-demo-2
+---
+# Source: gnoma-chart/templates/render.yaml
+apiVersion: batch/v1
+kind: Job
+metadata:
+  labels:
+    app.kubernetes.io/instance: gnoma-chart-demo
+    app.kubernetes.io/managed-by: Helm
+    gnoma.io/selector: job-en-helper
+    helm.sh/chart: gnoma-chart-0.1.0
+  name: job-en-helper
+  namespace: gnoma-chart-demo
+spec:
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/instance: gnoma-chart-demo
+        app.kubernetes.io/managed-by: Helm
+        gnoma.io/selector: job-en-helper
+        helm.sh/chart: gnoma-chart-0.1.0
+      name: job-en-helper
+      namespace: gnoma-chart-demo
+    spec:
+      containers:
+      - name: job-en-helper
+        image: quay.io/centos/centos:stream9-minimal
+        imagePullPolicy: Always
+        ports:
+        - name: default-port
+          containerPort: 8080
+          protocol: TCP
+        resources:
+          limits: {}
+          requests: {}
+        securityContext:
+          allowPrivilegeEscalation: false
+          capabilities:
+            drop:
+            - ALL
+        args:
+        - for COUNTER in {1..5}; do echo ${WELCOME_MSG}; done
+        command:
+        - bash
+        - -c
+        env:
+        - name: WELCOME_MSG
+          value: Howdy from job-en-helper in release gnoma-chart-demo!
+      imagePullSecrets: []
+      securityContext:
+        runAsNonRoot: true
+        seccompProfile:
+          type: RuntimeDefault
+      restartPolicy: "Never"
+# Rendered Gnoma Chart Template -> "job" job-en-helper
+---
+# Source: gnoma-chart/templates/render.yaml
+apiVersion: batch/v1
+kind: Job
+metadata:
+  labels:
+    app.kubernetes.io/instance: gnoma-chart-demo
+    app.kubernetes.io/managed-by: Helm
+    gnoma.io/selector: job-en-helper
+    helm.sh/chart: gnoma-chart-0.1.0
+  name: job-en-helper
+  namespace: gnoma-chart-demo-2
+spec:
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/instance: gnoma-chart-demo
+        app.kubernetes.io/managed-by: Helm
+        gnoma.io/selector: job-en-helper
+        helm.sh/chart: gnoma-chart-0.1.0
+      name: job-en-helper
+      namespace: gnoma-chart-demo-2
+    spec:
+      containers:
+      - name: job-en-helper
+        image: quay.io/centos/centos:stream9-minimal
+        imagePullPolicy: Always
+        ports:
+        - name: default-port
+          containerPort: 8080
+          protocol: TCP
+        resources:
+          limits: {}
+          requests: {}
+        securityContext:
+          allowPrivilegeEscalation: false
+          capabilities:
+            drop:
+            - ALL
+        args:
+        - for COUNTER in {1..5}; do echo ${WELCOME_MSG}; done
+        command:
+        - bash
+        - -c
+        env:
+        - name: WELCOME_MSG
+          value: Howdy from job-en-helper in release gnoma-chart-demo!
+      imagePullSecrets: []
+      securityContext:
+        runAsNonRoot: true
+        seccompProfile:
+          type: RuntimeDefault
+      restartPolicy: "Never"
+# Rendered Gnoma Chart Template -> "job" job-en-helper
+---
+# Source: gnoma-chart/templates/render.yaml
+apiVersion: batch/v1
+kind: Job
+metadata:
+  labels:
+    app.kubernetes.io/instance: gnoma-chart-demo
+    app.kubernetes.io/managed-by: Helm
+    gnoma.io/selector: job-es-helper
+    helm.sh/chart: gnoma-chart-0.1.0
+  name: job-es-helper
+  namespace: gnoma-chart-demo
+spec:
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/instance: gnoma-chart-demo
+        app.kubernetes.io/managed-by: Helm
+        gnoma.io/selector: job-es-helper
+        helm.sh/chart: gnoma-chart-0.1.0
+      name: job-es-helper
+      namespace: gnoma-chart-demo
+    spec:
+      containers:
+      - name: job-es-helper
+        image: quay.io/centos/centos:stream9-minimal
+        imagePullPolicy: Always
+        ports:
+        - name: default-port
+          containerPort: 8080
+          protocol: TCP
+        resources:
+          limits: {}
+          requests: {}
+        securityContext:
+          allowPrivilegeEscalation: false
+          capabilities:
+            drop:
+            - ALL
+        args:
+        - for COUNTER in {1..5}; do echo ${WELCOME_MSG}; done
+        command:
+        - bash
+        - -c
+        env:
+        - name: WELCOME_MSG
+          value: ¡Hola desde job-es-helper en el lanzamiento gnoma-chart-demo!
+      imagePullSecrets: []
+      securityContext:
+        runAsNonRoot: true
+        seccompProfile:
+          type: RuntimeDefault
+      restartPolicy: "Never"
+# Rendered Gnoma Chart Template -> "job" job-es-helper
+---
+# Source: gnoma-chart/templates/render.yaml
+apiVersion: batch/v1
+kind: Job
+metadata:
+  labels:
+    app.kubernetes.io/instance: gnoma-chart-demo
+    app.kubernetes.io/managed-by: Helm
+    gnoma.io/selector: job-es-helper
+    helm.sh/chart: gnoma-chart-0.1.0
+  name: job-es-helper
+  namespace: gnoma-chart-demo-2
+spec:
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/instance: gnoma-chart-demo
+        app.kubernetes.io/managed-by: Helm
+        gnoma.io/selector: job-es-helper
+        helm.sh/chart: gnoma-chart-0.1.0
+      name: job-es-helper
+      namespace: gnoma-chart-demo-2
+    spec:
+      containers:
+      - name: job-es-helper
+        image: quay.io/centos/centos:stream9-minimal
+        imagePullPolicy: Always
+        ports:
+        - name: default-port
+          containerPort: 8080
+          protocol: TCP
+        resources:
+          limits: {}
+          requests: {}
+        securityContext:
+          allowPrivilegeEscalation: false
+          capabilities:
+            drop:
+            - ALL
+        args:
+        - for COUNTER in {1..5}; do echo ${WELCOME_MSG}; done
+        command:
+        - bash
+        - -c
+        env:
+        - name: WELCOME_MSG
+          value: ¡Hola desde job-es-helper en el lanzamiento gnoma-chart-demo!
+      imagePullSecrets: []
+      securityContext:
+        runAsNonRoot: true
+        seccompProfile:
+          type: RuntimeDefault
+      restartPolicy: "Never"
+# Rendered Gnoma Chart Template -> "job" job-es-helper
+---
+# Source: gnoma-chart/templates/render.yaml
+apiVersion: batch/v1
+kind: Job
+metadata:
+  labels:
+    app.kubernetes.io/instance: gnoma-chart-demo
+    app.kubernetes.io/managed-by: Helm
+    gnoma.io/selector: job-en-raw
+    helm.sh/chart: gnoma-chart-0.1.0
+  name: job-en-raw
+  namespace: gnoma-chart-demo
+spec:
+  template:
+    spec:
+      containers:
+      - args:
+        - for COUNTER in {1..5}; do echo ${WELCOME_MSG}; done
+        command:
+        - bash
+        - -c
+        env:
+        - name: WELCOME_MSG
+          value: Howdy from job-en-raw in release gnoma-chart-demo!
+        image: quay.io/centos/centos:stream9-minimal
+        name: job-en-raw
+      restartPolicy: Never
+# Rendered YAML Template -> kind: "Job" name: "job-en-raw"
+---
+# Source: gnoma-chart/templates/render.yaml
+apiVersion: batch/v1
+kind: Job
+metadata:
+  labels:
+    app.kubernetes.io/instance: gnoma-chart-demo
+    app.kubernetes.io/managed-by: Helm
+    gnoma.io/selector: job-en-raw
+    helm.sh/chart: gnoma-chart-0.1.0
+  name: job-en-raw
+  namespace: gnoma-chart-demo-2
+spec:
+  template:
+    spec:
+      containers:
+      - args:
+        - for COUNTER in {1..5}; do echo ${WELCOME_MSG}; done
+        command:
+        - bash
+        - -c
+        env:
+        - name: WELCOME_MSG
+          value: Howdy from job-en-raw in release gnoma-chart-demo!
+        image: quay.io/centos/centos:stream9-minimal
+        name: job-en-raw
+      restartPolicy: Never
+# Rendered YAML Template -> kind: "Job" name: "job-en-raw"
+---
+# Source: gnoma-chart/templates/render.yaml
+apiVersion: batch/v1
+kind: Job
+metadata:
+  labels:
+    app.kubernetes.io/instance: gnoma-chart-demo
+    app.kubernetes.io/managed-by: Helm
+    gnoma.io/selector: job-es-raw
+    helm.sh/chart: gnoma-chart-0.1.0
+  name: job-es-raw
+  namespace: gnoma-chart-demo
+spec:
+  template:
+    spec:
+      containers:
+      - args:
+        - for COUNTER in {1..5}; do echo ${WELCOME_MSG}; done
+        command:
+        - bash
+        - -c
+        env:
+        - name: WELCOME_MSG
+          value: ¡Hola desde job-es-raw en el lanzamiento gnoma-chart-demo!
+        image: quay.io/centos/centos:stream9-minimal
+        name: job-es-raw
+      restartPolicy: Never
+# Rendered YAML Template -> kind: "Job" name: "job-es-raw"
+---
+# Source: gnoma-chart/templates/render.yaml
+apiVersion: batch/v1
+kind: Job
+metadata:
+  labels:
+    app.kubernetes.io/instance: gnoma-chart-demo
+    app.kubernetes.io/managed-by: Helm
+    gnoma.io/selector: job-es-raw
+    helm.sh/chart: gnoma-chart-0.1.0
+  name: job-es-raw
+  namespace: gnoma-chart-demo-2
+spec:
+  template:
+    spec:
+      containers:
+      - args:
+        - for COUNTER in {1..5}; do echo ${WELCOME_MSG}; done
+        command:
+        - bash
+        - -c
+        env:
+        - name: WELCOME_MSG
+          value: ¡Hola desde job-es-raw en el lanzamiento gnoma-chart-demo!
+        image: quay.io/centos/centos:stream9-minimal
+        name: job-es-raw
+      restartPolicy: Never
+# Rendered YAML Template -> kind: "Job" name: "job-es-raw"
+---
+# Source: gnoma-chart/templates/render.yaml
+# Profiles: []

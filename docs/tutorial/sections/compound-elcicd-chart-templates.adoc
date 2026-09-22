@@ -1,0 +1,75 @@
+=== Compound Gnoma Chart Templates
+:helm-update-command: helm upgrade --install --rollback-on-failure -n gnoma-chart-demo --create-namespace -f gnoma-demo-2.yaml gnoma-chart-demo gnoma-charts/gnoma-chart
+:result-image: rhel-test-page-screenshot.png
+:helm-manifest-file: compound-template-manifest
+:kubectl-get-file: compound-template-kubectl-get
+
+.Features demonstrated
+****
+* Defining compound templates.
+* Reducing boilerplate YAML using common Gnoma Chart templates helper attributes.
+****
+
+In <<Gnoma Chart Templates>>, we demonstrated the conciseness and modularity Gnoma Chart templates.  We will now show how to combine multiple, related Gnoma Chart templates into a single __compound template__ for even more concise deployment definitions.
+
+TIP: **Any Gnoma Chart built-in template can be compounded into a single template definition as long as any common helper attributes refer to the same, basic data.**
+
+[discrete]
+==== Create and save the following file as `gnoma-demo-2.yaml`
+
+[source,YAML,linenums]
+----
+gnomaTemplates:
+- templateNames: [deployment, service, ingress] # <.>
+  image: registry.redhat.io/rhel8/httpd-24
+  host: httpd-$<HELM_RELEASE_NAMESPACE>.apps-crc.testing
+  port: 8081 # <.>
+  targetPort: 8080 # <.>
+----
+[TIP]
+====
+YAML is a superset of JSON; thus YAML will interpret both `[deployment, service, ingress]` and
+[source,YAML,linenums]
+----
+templateNames:
+- deployment
+- service
+- ingress
+----
+as lists.
+====
+
+<.> Compound templates are defined as a list under the `templateNames` attribute, versus `templateName` for a single template.
+
+<.> In compound templates, all helper attributes are shared among the Gnoma templates.
+.. `image` is unique to the `deployment` template.
+.. `host` is unique to the `ingress` Gnoma Chart template.
+.. `port` is shared and used by all three listed Gnoma Chart templates.
+.. `targetPort` is shared by the `service` and `deployment` templates, and take precedence over the `port` attribute when defined.
+
+NOTE: In the first part of the tutorial, <<Gnoma Chart Templates>>, we promised to explain why we contrived a different port and target port, and it was to better demonstrate how shared helper attributes would behave in compound templates.
+
+[discrete]
+==== Tutorial steps
+
+.What to expect
+****
+* A Deployment, Service, Ingress, and ConfigMap will be deployed on the cluster using Gnoma Chart.
+* An httpd Pod will be created from the Deployment and accessible in the browser from outside the cluster.
+* The httpd server's test page will be reachable and visible in the browser.
+****
+
+. {empty}
+include::general-steps/upgrade-install-chart.adoc[]
+
+. {empty}
+include::general-steps/view-chart-manifests.adoc[]
+
+. {empty}
+include::general-steps/view-running-resources.adoc[]
+
+. {empty}
+include::general-steps/verify-httpd-reachable.adoc[]
+
+. {empty}
+include::general-steps/uninstall-chart.adoc[]

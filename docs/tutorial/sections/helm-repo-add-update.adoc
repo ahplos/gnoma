@@ -1,0 +1,20 @@
+=== Add and update the Gnoma Chart repository
+
+Add and update the Gnoma Chart repository.  This will pull the chart from the GitHub repository to your local machine for use.
+
+```
+$ helm repo add gnoma-charts https://ahplos.github.io/Gnoma-deploy/charts/
+$ helm repo update
+```
+NOTE: Deploying Helm charts from OCI repositories is better, but GitHub currently makes is easy to serve Helm charts from GitHub pages
++
+Output::
+```
+"gnoma-charts" has been added to your repositories
+```
+
+```
+Hang tight while we grab the latest from your chart repositories...
+...Successfully got an update from the "gnoma-charts" chart repository
+Update Complete. ⎈Happy Helming!⎈
+```

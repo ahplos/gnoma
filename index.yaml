@@ -1,0 +1,23 @@
+apiVersion: v1
+entries:
+  gnoma:
+  - apiVersion: v2
+    created: "2026-09-15T18:07:07.95499418-05:00"
+    description: 'An all-in-one chart that can be used directly or as an added dependency
+      for defining variable definitions and deployment profiles in values.yaml files.'
+    digest: 23861b9926aa2f536422e86f1c1503b70291ceae853a4e76e699a9b716dafdc8
+    keywords:
+    - values.yml
+    - values.yaml
+    - yaml
+    - template
+    - profiles
+    - deployment profiles
+    name: gnoma
+    sources:
+    - https://github.com/ahplos/gnoma/tree/main/chart
+    type: application
+    urls:
+    - https://github.com/ahplos/gnoma/tree/main/gnoma-0.1.0.tgz
+    version: 0.1.0
+generated: "2026-09-15T18:07:07.953955211-05:00"

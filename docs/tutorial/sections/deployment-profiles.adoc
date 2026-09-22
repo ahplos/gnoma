@@ -1,0 +1,170 @@
+=== Deployment Profiles
+
+.Features demonstrated
+****
+* Defining and deploying with arbitrary Gnoma Chart deployment profiles.
+* `gnomaDefs-*` variable map definitions.
+* Using Gnoma Chart matrices to further reduce copying and pasting boilerplate Kubernetes resource definitions.
+****
+
+In <<User-defined Variables>>, we demonstrated how to define and reference your own variables. In this part of the tutorial you'll learn about deployment profiles.  While the previous parts of the tutorial have focused on Gnoma Chart's strengths with regards to templating, readability, and conciseness, it's the deployment profiles that give Gnoma Chart its true power.  This feature makes it much, much easier for users to manage the same, basic deployment definitions across numerous environments with minimal configuration changes.
+
+Example use cases for deployment profiles::
+* https://en.wikipedia.org/wiki/Software_development_process[The software development lifecycle,window=read-later] (SDLC).
++
+Development, test, and production are rarely configured the same way.
+* Different geographical jurisdictions
++
+Regulatory and/or language requirements almost always differ between geographical jurisdictions.
+* High availability and persistence options
++
+One or more services of an an application need to be deployed as highly available and/or data persistence options, either in production or for testing purposes.
+
+Deployment profiles are most useful whenever a resource needs to be deployed differently depending on the situation or environment.
+
+[discrete]
+==== Create and save the following file as `gnoma-demo-4.yaml`
+
+[source,YAML,linenums]
+----
+gnomaDefs:
+  MULTI_LINGUAL_PROFILE: MULTI_LINGUAL
+  INDEX_HTML_NAME: index.html
+  DEFAULT_PAGE_CONTENT: <h1>Howdy from $<OBJ_NAME> in release $<HELM_RELEASE_NAME>!<h1>
+  PAGE_CONTENT: $<DEFAULT_PAGE_CONTENT>
+  HTML_PAGE: <!DOCTYPE html><html><body>$<PAGE_CONTENT></body></html>
+
+gnomaDefs-$<MULTI_LINGUAL_PROFILE>: # <.>
+  PAGE_CONTENT: <h1><a href="$<ENGLISH>">English</a>&nbsp;<a href="$<ESPANOL>">Español</a></h1>
+  ENGLISH: english.html
+  ESPANOL: espanol.html
+
+gnomaTemplates:
+- templateNames: [deployment, service, ingress]
+  image: registry.redhat.io/rhel8/httpd-24
+  host: httpd-$<NAME_SPACE>.apps-crc.testing
+  projectedVolumes:
+  - name: $<HELM_RELEASE_NAME>
+    mountPath: /var/www/html/
+    configMaps:
+      $<INDEX_HTML_NAME>: {}
+      $<ENGLISH>: {} # <.>
+      $<ESPANOL>: {}
+
+- templateName: configMap
+  objName: $<INDEX_HTML_NAME>
+  data:
+    $<OBJ_NAME>: $<HTML_PAGE>
+
+- templateName: configMap
+  objNames: # <.>
+  - $<ENGLISH>
+  - $<ESPANOL>
+  mustHaveAnyProfile:
+  - $<MULTI_LINGUAL_PROFILE> # <.>
+  gnomaDefs-$<ENGLISH>: # <.>
+    PAGE_CONTENT:  $<DEFAULT_PAGE_CONTENT>
+  gnomaDefs-$<ESPANOL>:
+    PAGE_CONTENT: <h1>¡Hola desde $<OBJ_NAME> en el lanzamiento $<HELM_RELEASE_NAME>!<h1>
+  data:
+    $<OBJ_NAME>: $<HTML_PAGE>
+----
+<.> Deployment profiles are defined whenever an Gnoma Chart template and/or `gnomaDefs` variable map is marked for them.
+.. Deployment profiles must consist of upper case alphanumeric characters, '_', or '.', and must start and end with an alphanumeric characters; `[A-Z0-9]+([_.][A-Z0-9]+)*`
++
+NOTE: This naming standard was chosen so that resource names, which must follow Kubernetes naming standards, and deployment profiles could never be confused.
++
+.. `gnomaDefs-$<MULTI_LINGUAL_PROFILE>` declares the `$<MULTI_LINGUAL_PROFILE>` (`MULTI_LINGUAL`) profile.
+... Gnoma Chart template __discriminators__ define whether or not a template should be rendered based on the active profile(s).
+
+<.> If keys in maps or values in maps or lists evaluate to empty or null values after processing, they will be removed.
+.. If the `MULTI_LINGUAL` deployment profile is inactive, the keys evaluate to null, and each member of the `configMaps` list will not be rendered after processing.
+
+<.> `objNames` is one of two Gnoma Chart matrices (`namespaces` being the other).
+.. Matrices are lists that will tell Gnoma Chart to generate a copy of the template for each element in the list.
+.. `objName` will be assigned for each copy corresponding to an element in the `objNames` list used to generate it.
+.. The matrix definition defines two ConfigMaps, `$<ENGLISH>` (`english.html) and `$<ESPANOL>` (`espanol.html`).
+
+<.> `mustHaveAnyProfile` is a template __discriminator__
+.. Discriminators can also define profiles.
+.. The Gnoma Chart template defines multiple ConfigMaps via the `objNames` matrix, but they will only be rendered if the `MULTI_LINGUAL` profiles is active.
+
+<.> Gnoma Chart variables maps can be defined for a specific template.
+.. `gnomaDefs` variable maps can be declared for specific profiles, a particular `objName`, and/or under specific Gnoma Chart templates.
+... `objName` and/or profiles can be appended to `gnomaDefs` using a `-` as a delimiter; e.g.
+.... `gnomaDefs-foo` for `objName` `foo`, which declares variables only for objects named "foo".
+.... `gnomaDefs-BAR` for deployment profile `BAR`, which declares variables only when the `BAR` profile is active.
+.... `gnomaDefs-foo-BAR` or `gnomaDefs-BAR-foo`, which declares variables only for objects named "foo" when the `BAR` profile is active.
+.... Discriminators in `gnomaDefs` declarations can be dynamic; e.g. `gnomaDefs-$<FOO>`
+.... If an `gnomaDefs-*` map ends in just a dash, or has two dashes within it because a variable used to define it is empty, it will be ignored.
+
+==== Deploy the httpd server without an active deployment profile
+:helm-update-command: helm upgrade --install --rollback-on-failure -n gnoma-chart-demo --create-namespace -f gnoma-demo-4.yaml gnoma-chart-demo gnoma-charts/gnoma-chart
+:result-image: deployment-profiles-default-screenshot.png
+:helm-manifest-file: deployment-profiles-default-manifest
+:kubectl-get-file: deployment-profiles-default-kubectl-get
+
+Deploying without a deployment profile with the above deployment definition will look identical to the <<User-defined Variables>> demonstration in every way.  The lack of a proper active profile in this deployment means all the additions made to the deployment definition in `gnoma-demo-4.yaml` compared to `gnoma-demo-3.yaml` will be ignored.
+
+[discrete]
+==== Tutorial steps
+
+.What to expect
+****
+* A Deployment, Service, Ingress, and ConfigMap will be deployed on the cluster using Gnoma Chart.
+* An httpd Pod will be created from the Deployment and accessible in the browser from outside the cluster.
+* The ConfigMap will contain an index.html web page that was generated from multiple Gnoma Chart variables.
+* The ConfigMap will be mounted inside the httpd Pod, and and the index.html page will become the server's home page.
+****
+
+. {empty}
+include::general-steps/upgrade-install-chart.adoc[]
+
+. {empty}
+include::general-steps/view-chart-manifests.adoc[]
+
+. {empty}
+include::general-steps/view-running-resources.adoc[]
+
+. {empty}
+include::general-steps/verify-httpd-reachable.adoc[]
+
+. {empty}
+include::general-steps/uninstall-chart.adoc[]
+
+==== Install the httpd server with the `MULTI_LINGUAL` deployment profile
+:helm-update-command: helm upgrade --install --rollback-on-failure -n gnoma-chart-demo --create-namespace --set gnomaProfiles='{MULTI_LINGUAL}' -f gnoma-demo-4.yaml gnoma-chart-demo gnoma-charts/gnoma-chart
+:result-image: deployment-profiles-multi-lingual-screenshot.png
+:helm-manifest-file: deployment-profiles-multi-lingual-manifest
+:kubectl-get-file: deployment-profiles-multi-lingual-kubectl-get
+
+Gnoma Chart deployment profiles are defined in `gnomaProfiles` as a list.  The `helm update --install` command is modified to apply deployment profile `--set gnomaProfiles='{MULTI_LINGUAL}'` clause.  If more than one deployment profile is specified, the order of precedence is from least to greatest in determining the values of variables; e.g. given `gnomaProfiles={FOO,BAR}`, all conflicting variable definitions defined in the `BAR` profile would take precedence over `FOO`.
+
+This part of the demonstration will change the server's home page to display a pair of links that will take you to either English or Spanish versions of the "Howdy!" message.
+
+[discrete]
+==== Tutorial steps
+
+.What to expect
+****
+* A Deployment, Service, Ingress, and ConfigMap will be deployed on the cluster using Gnoma Chart.
+* An httpd Pod will be created from the Deployment and accessible in the browser from outside the cluster.
+* An index.html, english.html, and spanish.html web page will be generated from multiple Gnoma Chart variables.
+* Three ConfigMaps, each containing the generated web pages, will be deployed to the cluster, and mounted inside the httpd Pod.
+* The index.html page will contain links to the english.html and spanish.html pages.
+****
+
+. {empty}
+include::general-steps/upgrade-install-chart.adoc[]
+
+. {empty}
+include::general-steps/view-chart-manifests.adoc[]
+
+. {empty}
+include::general-steps/view-running-resources.adoc[]
+
+. {empty}
+include::general-steps/verify-httpd-reachable.adoc[]
+
+. {empty}
+include::general-steps/uninstall-chart.adoc[]

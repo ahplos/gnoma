@@ -1,0 +1,64 @@
+= Gnoma Chart Tutorial
+:source-highlighter: rouge
+:icons: font
+:sectnums:
+:sectnumlevels: 4
+:toc:
+
+No prior knowledge of Helm is required.
+
+Time to completion::
+
+**45-60m**
+
+Prerequisites::
+
+It is assumed the reader has at least a basic understanding of the following topics and technologies:
+
+* YAML
+* Docker/OCI images and containers
+* Application deployments in Kubernetes
+
+Software and tools required::
+
+* https://kubernetes.io/docs/tasks/tools/[`kubectl`] or other Kubernetes compatible client (e.g. https://docs.okd.io/latest/cli_reference/openshift_cli/getting-started-cli.html[`oc`,window=read-later]) installed locally
+* https://helm.sh/docs/intro/install/[Helm,window=read-later] installed locally
+* Access to a Kubernetes compatible cluster
+
+This tutorial was written and tested on https://github.com/crc-org/crc[CRC,window=read-later] (aka OpenShift Local), local OKD/OpenShift cluster provided by Red Hat for developer testing, and thus all URL's in the tutorial will use the wildcard domain `*.app-crc.testing`; however any Kubernetes compatible cluster will suffice for running the tutorial, as long as internet access is available to pull Gnoma Chart and the test images.  You will need to adjust your endpoint URL's to your own cluster's wildcard if not using CRC.
+
+The tutorial will mostly focus on deploying the https://httpd.apache.org/[Apache Web Server,window=read-later] using https://catalog.redhat.com/software/containers/ubi8/httpd-24/6065b844aee24f523c207943[Red Hat's official httpd image,window=read-later] and will not deploy Secrets, so that whether you are deploying on vanilla Kubernetes or a more security conscious cluster like OpenShift this tutorial will run smoothly with only basic developer permissions required.
+
+include::sections/overview.adoc[]
+
+== Tutorial
+
+This tutorial will demonstrate how Gnoma Chart can make defining and defining Kubernetes deployment definitions easier, more readable, and more concise as well as directly supporting configuration management.
+
+NOTE: **All commands used below will refer to `kubectl`, but if on OpenShift `oc` will work just as well.**
+
+include::sections/helm-repo-add-update.adoc[]
+
+include::sections/gnoma-chart-templates.adoc[]
+
+include::sections/compound-gnoma-chart-templates.adoc[]
+
+include::sections/user-defined-variables.adoc[]
+
+include::sections/deployment-profiles.adoc[]
+
+include::sections/free-form-templates.adoc[]
+
+=== Remove the Gnoma Chart repository
+
+```
+$ helm repo remove gnoma-charts
+```
+
+Output::
+
+```
+"gnoma-charts" has been removed from your repositories
+```
+
+This concludes the Gnoma Chart tutorial.

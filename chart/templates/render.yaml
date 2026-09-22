@@ -1,0 +1,5 @@
+{{/*
+Default YAML file for using Gnoma Chart.  Calls the entry point template for Gnoma Chart, "gnoma-renderer.render".
+*/}}
+
+{{- include "gnoma-renderer.render" . }}

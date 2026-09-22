@@ -1,0 +1,11 @@
+Uninstall the chart.
++
+```
+$ helm uninstall -n gnoma-chart-demo gnoma-chart-demo
+```
++
+Output::
++
+```
+release "gnoma-chart-demo" uninstalled
+```

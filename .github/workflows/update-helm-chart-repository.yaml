@@ -1,0 +1,81 @@
+# GitHub Action that will automatically:
+# - package all charts in a repo
+# - push packaged charts to ghcr.io (GitHub container registry)
+# - rebuild the index for https dependency references (i.e. https://raw.githubusercontent.com/.../charts)
+#
+# Action will only run on push and pull_request events
+# Assumes all charts are stored in a <repo>/charts directory
+
+name: Update Helm Chart Repository
+
+on:
+  push:
+    branches:
+    - main
+    paths:
+    - 'charts/**'
+
+  pull_request_target:
+    branches:
+    - main
+    paths:
+    - 'charts/**'
+    types:
+      - closed
+
+  workflow_dispatch:
+
+jobs:
+  package-charts:
+    runs-on: ubuntu-latest
+    env:
+      BRANCH_NAME: ${{ github.head_ref || github.ref_name }} #
+    permissions:
+      contents: write
+      packages: write
+    steps:
+    - name: Git Checkout gh-pages
+      uses: actions/checkout@v4
+      with:
+        ref: gh-pages
+
+    - name: Merge main -> gh-pages
+      uses: devmasx/merge-branch@master
+      with:
+        type: now
+        from_branch: main
+        target_branch: gh-pages
+        github_token: ${{ secrets.GITHUB_TOKEN }}
+
+    - name: Configure Git
+      run: |
+        git config --global user.name "gnoma"
+        git config --global user.email "gnoma@donotreply.org"
+        git pull
+        git switch ${BRANCH_NAME}
+
+    - name: Helm Installation
+      uses: azure/setup-helm@v3
+      env:
+        GITHUB_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
+
+    - name: Push Helm to ${{ github.repository_owner }} GitHub OCI Registry
+      run: |
+        set -ex
+        echo ${{secrets.GITHUB_TOKEN}} | helm registry login -u NOT_NEEDED --password-stdin ghcr.io
+
+        git rm -f *.tgz || :
+
+        helm package ./chart
+        rm -f ./chart/Chart.lock
+
+        CHART_VERSION=$(grep '^version:' ./chart/Chart.yaml | awk '{print $2}' | tr -d '"')
+        CHART_NAME=$(grep '^name:' ./chart/Chart.yaml | awk '{print $2}')
+
+        helm push ${CHART_NAME}-${CHART_VERSION}.tgz oci://ghcr.io/gnoma
+
+        helm repo index ./chart
+
+        git add *.tgz index.yaml
+        git commit -m "Update Helm Index Workflow: updating packages and index of all Gnoma Helm charts"
+        git push

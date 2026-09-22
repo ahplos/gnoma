@@ -1,0 +1,1 @@
+include::gnoma-chart-template-manifest.adoc[]

@@ -1,0 +1,19 @@
+NAME                                READY   UP-TO-DATE   AVAILABLE   AGE
+deployment.apps/gnoma-chart-demo   1/1     1            1           5m23s
+
+NAME                                           DESIRED   CURRENT   READY   AGE
+replicaset.apps/gnoma-chart-demo-58494f8c55   1         1         1       5m23s
+
+NAME                                     READY   STATUS    RESTARTS   AGE
+pod/gnoma-chart-demo-58494f8c55-5tp6x   1/1     Running   0          5m23s
+
+NAME                                 DATA   AGE
+configmap/english.html               1      5m23s
+configmap/espanol.html               1      5m23s
+configmap/index.html                 1      5m23s
+
+NAME                        TYPE        CLUSTER-IP    EXTERNAL-IP   PORT(S)    AGE
+service/gnoma-chart-demo   ClusterIP   10.217.5.97   <none>        8080/TCP   5m23s
+
+NAME                                          CLASS    HOSTS                                      ADDRESS                           PORTS     AGE
+ingress.networking.k8s.io/gnoma-chart-demo   <none>   httpd-gnoma-chart-demo.apps-crc.testing   router-default.apps-crc.testing   80, 443   5m23s

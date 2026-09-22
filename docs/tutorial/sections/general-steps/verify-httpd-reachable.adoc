@@ -1,0 +1,17 @@
+Get the value of the host from the Ingress, and verify the Apache Web Server is reachable:
++
+```
+$ kubectl get ingress -n gnoma-chart-demo --no-headers -o custom-columns=:.spec.rules[*].host
+```
++
+Output::
++
+```
+httpd-gnoma-chart-demo.apps-crc.testing
+```
++
+Open your browser and go to https://httpd-gnoma-chart-demo.apps-crc.testing[https://httpd-gnoma-chart-demo.apps-crc.testing,window=read-later].
++
+NOTE: If not using CRC, run the `kubectl get` command above to get the correct host.
++
+image::sections/general-steps/images/{result-image}[]

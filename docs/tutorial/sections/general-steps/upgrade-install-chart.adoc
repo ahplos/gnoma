@@ -1,0 +1,18 @@
+Install the `gnoma-chart-demo` release in the `gnoma-chart-demo` namespace using the Gnoma Chart:
++
+[source,subs="attributes"]
+----
+$ {helm-update-command}
+----
++
+Output::
++
+```
+Release "gnoma-chart-demo" does not exist. Installing it now.
+NAME: gnoma-chart-demo
+LAST DEPLOYED: Tue Jul 16 16:47:02 2024
+NAMESPACE: gnoma-chart-demo
+STATUS: deployed
+REVISION: 1
+TEST SUITE: None
+```

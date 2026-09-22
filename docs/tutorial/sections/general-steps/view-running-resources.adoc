@@ -1,0 +1,11 @@
+View the running `gnoma-chart-demo` resources in the cluster:
++
+```
+$ kubectl get -n gnoma-chart-demo -l gnoma.io/selector deploy,rs,pod,cm,service,ingress
+```
++
+Output::
++
+```
+include::kubectl-gets/{kubectl-get-file}.adoc[]
+```

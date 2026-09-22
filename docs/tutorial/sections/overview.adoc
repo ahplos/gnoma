@@ -1,0 +1,59 @@
+== Overview
+
+Helm is an excellent package management tool for Kubernetes.  Deploying or removing an application on and off a Kubernetes cluster is handled very well by Helm.
+
+Where Helm falls short is when it comes to templating Kubernetes manifests.  Creating Helm templates can be difficult to learn let alone master.
+
+This tutorial will demonstrate how the Gnoma Chart can make defining Kubernetes manifests much easier for all involved while still taking advantage of Helm's package management functionality.
+
+NOTE: Gnoma Chart embeds its templates inside Helm values.yaml file(s), and writing Helm templates are not required when using Gnoma Chart.  In order to avoid confusion with the word "template", Gnoma Chart values.yaml file(s) will be referred to as __deployment definitions__.
+
+=== Starter Helm chart
+
+The following is the starter chart created by Helm when running `helm create my-new-chart` along with its issues:
+
+include::snippets/example-helm-chart.adoc[]
+
+Verbose::
+
+The files are verbose, and assume a good understanding of the manifests required to deploy an application on Kubernetes.
+
+Obtuse::
+
+Go Template syntax (everything between the double-brackets) and the supporting Sprig library is not very user friendly, but it's required knowledge to understand and modify Helm templates.
+
+Values used to render the chart are defined in files separate from Helm templates, and structured far differently, which can make understanding what will rendered difficult.
+
+No configuration management::
+
+Configuration management is not supported by Helm.  Defining charts that can adapts across even a narrowly defined set of different deployments can be challenging.
+
+It's code::
+
+Helm templates are code; it constitutes a separate application.  This means Helm charts need to be tested in isolation from the application they are meant to deploy.  Helm charts acknowledge this by supporting a https://helm.sh/docs/topics/chart_tests/[built-in testing framework].
+
+=== Gnoma Chart
+
+Gnoma Chart was created with the intention of leveraging all the package management goodness Helm has to offer while making defining deployments easier.  In particular, the following design goals were set:
+
+Helm centric::
+
+No extra scripts or special commands for standard Helm deployments or templating should be needed.  Gnoma Chart should be able to be used anywhere Helm can be used, and alongside any other Helm chart either as the main chart or a subchart.
+
+Easier::
+
+Defining deployments should be done using plain YAML documents, with no extra language skills or libraries.
+
+More concise::
+
+Support the https://en.wikipedia.org/wiki/Don%27t_repeat_yourself[DRY (Don't Repeat Yourself) Principle,window=read-later] aggressively to significantly reduce the amount of copying and pasting of boilerplate YAML.  For application developers, support reasonable defaults so deployment definitions are confined as much as possible to the application's needs.
+
+Support configuration management::
+
+Defining different configurations for the same set of deployment manifests (e.g. per locale, region, and/or development environment) should be easy and directly supported.
+
+Extensible::
+
+Kubernetes is very extensible, as the abundance of https://kubernetes.io/docs/concepts/extend-kubernetes/api-extension/custom-resources/[Custom Resource Definitions,window=read-later] illustrates.  Gnoma Chart should be able to render CRD's out-of-the-box without requiring new Helm template code.
+
+The following tutorial will demonstrate how Gnoma Chart met each of these goals.
