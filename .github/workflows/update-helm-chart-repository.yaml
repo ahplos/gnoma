@@ -72,7 +72,7 @@ jobs:
         CHART_VERSION=$(grep '^version:' ./chart/Chart.yaml | awk '{print $2}' | tr -d '"')
         CHART_NAME=$(grep '^name:' ./chart/Chart.yaml | awk '{print $2}')
 
-        helm push ${CHART_NAME}-${CHART_VERSION}.tgz oci://ghcr.io/gnoma
+        helm push ${CHART_NAME}-${CHART_VERSION}.tgz oci://ghcr.io/ahplos
 
         helm repo index ./chart
 
